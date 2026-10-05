@@ -49,6 +49,28 @@ public class DepartmentDAO {
         return list;
     }
 
+    public List<Department> searchByName(String keyword) {
+        List<Department> list = new ArrayList<>();
+        String sql = "SELECT * FROM departments WHERE name LIKE ?";
+
+        try (Connection conn = dbutil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + keyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Department(
+                            rs.getInt("id"),
+                            rs.getString("name")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public Department getById(int id) {
         String sql = "SELECT * FROM departments WHERE id = ?";
 
@@ -110,4 +132,3 @@ public class DepartmentDAO {
         }
     }
 }
-
